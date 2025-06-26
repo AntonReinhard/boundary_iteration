@@ -3,6 +3,8 @@
 #include <array>
 #include <cstddef>
 
+#include "boundary.hpp"
+
 template <typename T, std::size_t... Dims> struct Volume {};
 
 template <typename T, std::size_t Dim> class Volume<T, Dim> {
@@ -28,3 +30,8 @@ class Volume<T, Dim, Rest...> {
         return data[i];
     }
 };
+
+template <typename T, std::size_t... Dims>
+constexpr auto makeBoundaryIterator(Volume<T, Dims...> const &vol) {
+    return BoundaryDirectionsContainer<Volume<T, Dims...>::Dimensionality>{};
+}

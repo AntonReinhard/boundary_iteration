@@ -1,7 +1,6 @@
 #pragma once
 
 #include "common.hpp"
-#include "volume.hpp"
 
 enum class BoundaryType { LOWER, MIDDLE, UPPER, OOB };
 
@@ -86,8 +85,3 @@ template <int Dim> struct BoundaryDirectionsContainer {
 
     constexpr int length() { return ipow(3, Dim); }
 };
-
-template <typename T, std::size_t... Dims>
-constexpr auto makeBoundaryIterator(Volume<T, Dims...> const &vol) {
-    return BoundaryDirectionsContainer<Volume<T, Dims...>::Dimensionality>{};
-}

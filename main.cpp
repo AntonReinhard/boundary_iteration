@@ -7,6 +7,7 @@
 #include "iterable.hpp"
 #include "iterator.hpp"
 #include "volume.hpp"
+#include "volume_iter.hpp"
 
 constexpr int SIZE = 5;
 
@@ -33,6 +34,12 @@ int main() {
         std::cout << x << ' ';
     }
     std::cout << std::endl;
+
+    NestedPairIterator nested(bd, a);
+
+    for (const auto& [boundary, value] : nested) {
+        std::cout << boundary << ": " << value;
+    }
 
     return 0;
 }
