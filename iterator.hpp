@@ -5,20 +5,38 @@
 
 #include "volume.hpp"
 
-template <typename T, typename TVolume> class FlatIterator;
+template <typename T, typename TVolume, bool IsConst> class FlatIterator;
 
 // base case
-template <typename T, std::size_t Dim> class FlatIterator<T, Volume<T, Dim>> {
-    Volume<T, Dim> *volume = nullptr;
+template <typename T, std::size_t Dim, bool IsConst>
+class FlatIterator<T, Volume<T, Dim>, IsConst> {
+    using VolumePtr =
+        std::conditional_t<IsConst, const Volume<T, Dim> *, Volume<T, Dim> *>;
+
+    VolumePtr volume = nullptr;
     std::size_t index = 0;
 
   public:
     constexpr FlatIterator() = default;
 
-    constexpr FlatIterator(Volume<T, Dim> *vol, std::size_t idx)
+    constexpr FlatIterator(Volume<T, Dim> const *vol, std::size_t idx)
+        requires(IsConst)
         : volume(vol), index(idx) {}
 
-    constexpr T &operator*() const { return volume->data[index]; }
+    constexpr FlatIterator(Volume<T, Dim> *vol, std::size_t idx)
+        requires(!IsConst)
+        : volume(vol), index(idx) {}
+
+    constexpr T const &operator*() const
+        requires(IsConst)
+    {
+        return volume->data[index];
+    }
+    constexpr T &operator*()
+        requires(!IsConst)
+    {
+        return volume->data[index];
+    }
 
     constexpr FlatIterator &operator++() {
         ++index;
@@ -35,20 +53,30 @@ template <typename T, std::size_t Dim> class FlatIterator<T, Volume<T, Dim>> {
 };
 
 // recursive definition
-template <typename T, std::size_t Dim, std::size_t... Rest>
-class FlatIterator<T, Volume<T, Dim, Rest...>> {
+template <typename T, std::size_t Dim, std::size_t... Rest, bool IsConst>
+class FlatIterator<T, Volume<T, Dim, Rest...>, IsConst> {
     using VolumeType = Volume<T, Dim, Rest...>;
+    using RawVolume = std::remove_const_t<VolumeType>;
+    using VolumePtr =
+        std::conditional_t<IsConst, const RawVolume *, RawVolume *>;
     using InnerVolume = Volume<T, Rest...>;
-    using InnerIterator = FlatIterator<T, InnerVolume>;
+    using InnerIterator = FlatIterator<T, InnerVolume, IsConst>;
+    using Reference = std::conditional_t<IsConst, const T &, T &>;
 
-    VolumeType *volume = nullptr;
+    VolumePtr volume = nullptr;
     std::size_t outer_index = 0;
     InnerIterator inner;
 
   public:
+    using iterator_category = std::forward_iterator_tag;
+    using value_type = T;
+    using reference = Reference;
+    using pointer = std::add_pointer_t<reference>;
+
     constexpr FlatIterator() = default;
 
-    constexpr FlatIterator(VolumeType *vol, std::size_t idx)
+    constexpr FlatIterator(VolumePtr const vol, std::size_t idx)
+        requires(IsConst)
         : volume(vol), outer_index(idx) {
         if (outer_index < Dim) {
             inner = InnerIterator(&volume->data[outer_index], 0);
@@ -56,7 +84,16 @@ class FlatIterator<T, Volume<T, Dim, Rest...>> {
         }
     }
 
-    constexpr T &operator*() const { return *inner; }
+    constexpr FlatIterator(VolumePtr vol, std::size_t idx)
+        requires(!IsConst)
+        : volume(vol), outer_index(idx) {
+        if (outer_index < Dim) {
+            inner = InnerIterator(&volume->data[outer_index], 0);
+            advanceToValid();
+        }
+    }
+
+    constexpr reference operator*() const { return *inner; }
 
     constexpr FlatIterator &operator++() {
         ++inner;
@@ -75,7 +112,7 @@ class FlatIterator<T, Volume<T, Dim, Rest...>> {
 
   private:
     constexpr void advanceToValid() {
-        if (inner == FlatIterator<T, InnerVolume>(
+        if (inner == FlatIterator<T, InnerVolume, IsConst>(
                          &volume->data[outer_index],
                          volume->data[outer_index].data.size())) {
             ++outer_index;

@@ -1,30 +1,14 @@
 #include <cstddef> // for std::size_t
 #include <iostream>
+#include <type_traits>
 
 #include "boundary.hpp"
 #include "common.hpp"
+#include "iterable.hpp"
 #include "iterator.hpp"
 #include "volume.hpp"
 
-template <typename T, typename NDArrayType> class FlatIterable {
-    NDArrayType *array;
-
-  public:
-    constexpr FlatIterable(NDArrayType &arr) : array(&arr) {}
-
-    constexpr auto begin() { return FlatIterator<T, NDArrayType>(array, 0); }
-
-    constexpr auto end() {
-        return FlatIterator<T, NDArrayType>(array, array->data.size());
-    }
-};
-
-template <typename T, std::size_t... Dims>
-constexpr auto makeMap(Volume<T, Dims...> &array) {
-    return FlatIterable<T, Volume<T, Dims...>>(array);
-}
-
-constexpr auto make_array() {
+constexpr auto make_volume() {
     Volume<int, 2, 2, 2> a{};
     a[0][0][0] = 1;
     a[0][0][1] = 2;
@@ -37,11 +21,11 @@ constexpr auto make_array() {
     return a;
 }
 
-// static_assert(sum(makeMap(make_array())) == 36);
+static_assert(sum(makeMap(make_volume())) == 36);
 
 int main() {
-    auto a = make_array();
-    for (int x : makeMap(a)) {
+    constexpr auto a = make_volume();
+    for (const int &x : makeMap(a)) {
         std::cout << x << " ";
     }
     std::cout << "\n";
