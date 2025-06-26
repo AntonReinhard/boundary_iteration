@@ -71,7 +71,7 @@ class FlatIterator<T, Volume<T, Dim, Rest...>, IsConst> {
     using iterator_category = std::forward_iterator_tag;
     using value_type = T;
     using reference = Reference;
-    using pointer = std::add_pointer_t<reference>;
+    using const_reference = reference const;
 
     constexpr FlatIterator() = default;
 
@@ -93,7 +93,17 @@ class FlatIterator<T, Volume<T, Dim, Rest...>, IsConst> {
         }
     }
 
-    constexpr reference operator*() const { return *inner; }
+    constexpr const_reference operator*() const
+        requires(IsConst)
+    {
+        return *inner;
+    }
+
+    constexpr reference operator*()
+        requires(!IsConst)
+    {
+        return *inner;
+    }
 
     constexpr FlatIterator &operator++() {
         ++inner;
