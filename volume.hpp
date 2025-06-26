@@ -1,0 +1,25 @@
+#pragma once
+
+#include <array>
+#include <cstddef>
+
+template <typename T, std::size_t... Dims> struct Volume {};
+
+template <typename T, std::size_t Dim> class Volume<T, Dim> {
+  public:
+    std::array<T, Dim> data;
+
+    constexpr T &operator[](std::size_t i) { return data[i]; }
+    constexpr const T &operator[](std::size_t i) const { return data[i]; }
+};
+
+template <typename T, std::size_t Dim, std::size_t... Rest>
+class Volume<T, Dim, Rest...> {
+  public:
+    std::array<Volume<T, Rest...>, Dim> data;
+
+    constexpr Volume<T, Rest...> &operator[](std::size_t i) { return data[i]; }
+    constexpr const Volume<T, Rest...> &operator[](std::size_t i) const {
+        return data[i];
+    }
+};

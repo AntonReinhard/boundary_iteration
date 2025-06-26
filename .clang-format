@@ -1,0 +1,33 @@
+indent: 4
+# Use 4 spaces for indentation
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+
+# Based on LLVM style, modified for 4-space indents
+BasedOnStyle: LLVM
+
+# Optional: Control brace placement
+BreakBeforeBraces: Attach
+
+# Control function formatting
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: true
+AllowShortLoopsOnASingleLine: true
+
+# Namespace formatting
+NamespaceIndentation: All
+
+# Align parameters and arguments
+AlignAfterOpenBracket: Align
+AlignOperands: true
+
+# Format includes
+SortIncludes: true
+IncludeBlocks: Preserve
+
+# Keep empty lines at end of file
+InsertTrailingNewline: true
+
+# Optional: Reflow comments
+ReflowComments: true
