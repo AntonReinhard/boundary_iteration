@@ -1,8 +1,9 @@
-indent: 4
 # Use 4 spaces for indentation
 IndentWidth: 4
 TabWidth: 4
 UseTab: Never
+
+AccessModifierOffset: -4
 
 # Based on LLVM style, modified for 4-space indents
 BasedOnStyle: LLVM
@@ -25,9 +26,6 @@ AlignOperands: true
 # Format includes
 SortIncludes: true
 IncludeBlocks: Preserve
-
-# Keep empty lines at end of file
-InsertTrailingNewline: true
 
 # Optional: Reflow comments
 ReflowComments: true

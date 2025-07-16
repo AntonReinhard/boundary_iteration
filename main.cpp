@@ -28,17 +28,16 @@ int main() {
     }
     std::cout << std::endl;
 
-    constexpr auto bd = makeBoundaryIterator(a);
+    constexpr auto bd = makeBoundaryDirIterator(a);
 
     for (auto const &x : bd) {
         std::cout << x << ' ';
     }
     std::cout << std::endl;
 
-    NestedPairIterator nested(bd, a);
-
-    for (const auto& [boundary, value] : nested) {
-        std::cout << boundary << ": " << value;
+    auto b = make_volume();
+    for (auto const &x : bd) {
+        auto boundary_iter = BoundaryIter<int, 3, 5ULL, 5ULL, 5ULL>(x, b);
     }
 
     return 0;

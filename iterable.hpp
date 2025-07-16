@@ -10,7 +10,7 @@ template <typename T, typename VolumeType, bool IsConst> class FlatIterable {
 
     VolumePtr volume;
 
-  public:
+public:
     constexpr FlatIterable(const VolumeType &v)
         requires(IsConst)
         : volume(&v) {}

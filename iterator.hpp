@@ -16,7 +16,7 @@ class FlatIterator<T, Volume<T, Dim>, IsConst> {
     VolumePtr volume = nullptr;
     std::size_t index = 0;
 
-  public:
+public:
     constexpr FlatIterator() = default;
 
     constexpr FlatIterator(Volume<T, Dim> const *vol, std::size_t idx)
@@ -67,7 +67,7 @@ class FlatIterator<T, Volume<T, Dim, Rest...>, IsConst> {
     std::size_t outer_index = 0;
     InnerIterator inner;
 
-  public:
+public:
     using iterator_category = std::forward_iterator_tag;
     using value_type = T;
     using reference = Reference;
@@ -120,7 +120,7 @@ class FlatIterator<T, Volume<T, Dim, Rest...>, IsConst> {
         return !(*this == other);
     }
 
-  private:
+private:
     constexpr void advanceToValid() {
         if (inner == FlatIterator<T, InnerVolume, IsConst>(
                          &volume->data[outer_index],
