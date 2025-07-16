@@ -22,6 +22,14 @@ public:
         }
         throw std::invalid_argument("invalid dimension");
     }
+
+protected:
+    template <std::size_t D>
+    constexpr T &at_helper(std::array<std::size_t, D> const &i,
+                           std::size_t ii) {
+        return data[i[ii]];
+    }
+    template <typename TV, std::size_t... Dims2> friend class Volume;
 };
 
 template <typename T, std::size_t Dim, std::size_t... Rest>
@@ -36,12 +44,23 @@ public:
     constexpr const Volume<T, Rest...> &operator[](std::size_t i) const {
         return data[i];
     }
+    constexpr T &operator[](std::array<std::size_t, Dimensionality> const &i) {
+        return this->at_helper(i, 0);
+    }
     static constexpr const std::size_t size(std::size_t const dim) {
         if (dim == 0) {
             return Dim;
         }
         return Volume<T, Rest...>::size(dim - 1);
     }
+
+protected:
+    template <std::size_t D>
+    constexpr T &at_helper(std::array<std::size_t, D> const &i,
+                           std::size_t ii) {
+        return data[i[ii]].at_helper(i, ii + 1);
+    }
+    template <typename TV, std::size_t... Dims2> friend class Volume;
 };
 
 template <typename T, std::size_t... Dims>

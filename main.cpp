@@ -8,6 +8,7 @@
 #include "iterator.hpp"
 #include "volume.hpp"
 #include "volume_iter.hpp"
+#include "volume_section.hpp"
 
 constexpr int SIZE = 5;
 
@@ -30,14 +31,17 @@ int main() {
 
     constexpr auto bd = makeBoundaryDirIterator(a);
 
-    for (auto const &x : bd) {
-        std::cout << x << ' ';
-    }
-    std::cout << std::endl;
-
     auto b = make_volume();
     for (auto const &x : bd) {
-        auto boundary_iter = BoundaryIter<int, 3, 5ULL, 5ULL, 5ULL>(x, b);
+        std::cout << x << ": ";
+
+        auto volume_section = VolumeSection(x, b);
+
+        for (auto const &el : volume_section) {
+            std::cout << el << ", ";
+        }
+
+        std::cout << std::endl;
     }
 
     return 0;
