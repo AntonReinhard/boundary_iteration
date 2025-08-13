@@ -11,15 +11,15 @@
 
 template <typename ValueT, int Dim, std::size_t... Dims> class VolumeSection {
 public:
-    VolumeSection(BoundaryDirection<Dim> const &dir,
-                  Volume<ValueT, Dims...> &vol)
+    constexpr VolumeSection(BoundaryDirection<Dim> const &dir,
+                            Volume<ValueT, Dims...> &vol)
         : dir(dir), vol(vol) {}
 
-    BoundaryIter<ValueT, Dim, Dims...> begin() {
+    constexpr BoundaryIter<ValueT, Dim, Dims...> begin() {
         return BoundaryIter<ValueT, Dim, Dims...>(dir, vol);
     }
 
-    BoundaryIter<ValueT, Dim, Dims...> end() {
+    constexpr BoundaryIter<ValueT, Dim, Dims...> end() {
         auto bi = BoundaryIter<ValueT, Dim, Dims...>(dir, vol);
         bi.to_end();
         return bi;
