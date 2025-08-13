@@ -64,6 +64,6 @@ protected:
 };
 
 template <typename T, std::size_t... Dims>
-constexpr auto makeBoundaryDirIterator(Volume<T, Dims...> const &vol) {
+consteval auto makeBoundaryDirIterator(Volume<T, Dims...> const &) {
     return BoundaryDirectionsContainer<Volume<T, Dims...>::Dimensionality>{};
 }
